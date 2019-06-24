@@ -75,7 +75,6 @@ class App extends React.Component {
   }
 
   handleKeyDown = (row, column, evt) => {
-    evt.preventDefault()
     let tableDeepCopy = this.state.table.slice().map(x => x.slice())
     let rowLength = this.state.table[0].length - 1
     let columnLength = this.state.table.length - 1
@@ -103,6 +102,7 @@ class App extends React.Component {
       this[`myRef${row}${column - 1}`].current.focus()
     }
     else if (evt.key === 'ArrowRight' || evt.key === 'Tab') {
+      evt.preventDefault()
       // If pressing Right or Tab on the final column, create a new column (with refs) and draw focus on the right cell
       if (column === columnLength) {
         tableDeepCopy = tableDeepCopy.concat([Array(rowLength + 1).fill('')])
