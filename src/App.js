@@ -95,6 +95,12 @@ class App extends React.Component {
 
     if (evt.key === 'ArrowUp' && row > 0) {
       this[`myRef${row - 1}${column}`].current.focus()
+      const isLastRowEmpty = !this.state.table.find(column => !!column[rowLength])
+
+      if (isLastRowEmpty) {
+        tableDeepCopy = tableDeepCopy.map(column => column.slice(0, -1))
+        this.setState({table: tableDeepCopy})
+      }
     }
     else if (evt.key === 'ArrowDown' || evt.key === 'Enter') {
       // If pressing Down or Enter on the final row, create a new row (with refs) and draw focus on the cell below
@@ -113,6 +119,12 @@ class App extends React.Component {
     }
     else if (evt.key === 'ArrowLeft' && column > 0) {
       this[`myRef${row}${column - 1}`].current.focus()
+      const isLastColumnEmpty = !this.state.table[columnLength].find(x => !!x)
+      
+      if (isLastColumnEmpty) {
+        tableDeepCopy = tableDeepCopy.slice(0, -1)
+        this.setState({table: tableDeepCopy})
+      }
     }
     else if (evt.key === 'ArrowRight' || evt.key === 'Tab') {
       // If pressing Right or Tab on the final column, create a new column (with refs) and draw focus on the right cell
