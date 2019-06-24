@@ -1,5 +1,6 @@
 import React from 'react'
 import './App.scss'
+import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line} from 'recharts'
 
 function Table(props) {
   return (
@@ -99,7 +100,7 @@ class App extends React.Component {
 
       if (isLastRowEmpty) {
         tableDeepCopy = tableDeepCopy.map(column => column.slice(0, -1))
-        this.setState({table: tableDeepCopy})
+        this.setState({ table: tableDeepCopy })
       }
     }
     else if (evt.key === 'ArrowDown' || evt.key === 'Enter') {
@@ -109,7 +110,7 @@ class App extends React.Component {
           this[`myRef${row + 1}${columnIndex}`] = React.createRef()
           return columnValue.concat('')
         })
-        this.setState({table: tableDeepCopy}, () => {
+        this.setState({ table: tableDeepCopy }, () => {
           this[`myRef${row + 1}${column}`].current.focus()
         })
       }
@@ -120,10 +121,10 @@ class App extends React.Component {
     else if (evt.key === 'ArrowLeft' && column > 0) {
       this[`myRef${row}${column - 1}`].current.focus()
       const isLastColumnEmpty = !this.state.table[columnLength].find(x => !!x)
-      
+
       if (isLastColumnEmpty) {
         tableDeepCopy = tableDeepCopy.slice(0, -1)
-        this.setState({table: tableDeepCopy})
+        this.setState({ table: tableDeepCopy })
       }
     }
     else if (evt.key === 'ArrowRight' || evt.key === 'Tab') {
@@ -134,7 +135,7 @@ class App extends React.Component {
           this[`myRef${cellIndex}${columnLength + 1}`] = React.createRef()
           return null
         })
-        this.setState({table: tableDeepCopy}, () => {
+        this.setState({ table: tableDeepCopy }, () => {
           this[`myRef${row}${column + 1}`].current.focus()
         })
       }
@@ -147,16 +148,61 @@ class App extends React.Component {
   }
 
   render() {
+    const graphKeys = this.state.table.map(column => column[0])
+    const rowLength = this.state.table[0].length - 1
+    const columnLength = this.state.table.length - 1
+    const graphValues = [...new Array(rowLength + 1)].map(() => { return {} })
+    
+    const strokeColors = [...new Array(columnLength + 1)].map((el, index) => {
+      const baseColors = ['#8884d8', '#82ca9d', '#e91e63', '#00bcd4']
+      return baseColors[index % baseColors.length]
+    })
+
+    this.state.table.map((column, columnIndex) => {
+      column.map((row, rowIndex) => {
+        if (rowIndex === 0) {
+          return
+        }
+
+        const currentKey = graphKeys[columnIndex]
+        graphValues[rowIndex][currentKey] = row
+        return
+      })
+    })
+
     return (
       <div className="App">
         <h1>Grapher</h1>
-        
+
         <Table
           data={this.state.table}
           onChange={this.handleChangeCell}
           onKeyDown={this.handleKeyDown}
           self={this}
         />
+
+        <LineChart
+          width={730}
+          height={250}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          data={graphValues}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey={graphKeys[0]} />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {
+            graphKeys.map((graphKey, index) => {
+              if (index === 0) {
+                return
+              }
+              return (
+                <Line type="monotone" dataKey={graphKey} stroke={strokeColors[index - 1]} />      
+              )
+            })  
+          }
+        </LineChart>
       </div>
     )
   }
