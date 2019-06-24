@@ -75,10 +75,23 @@ class App extends React.Component {
   }
 
   handleKeyDown = (row, column, evt) => {
+    if (
+      evt.key === 'ArrowUp' ||
+      evt.key === 'ArrowDown' ||
+      evt.key === 'ArrowLeft' ||
+      evt.key === 'ArrowRight' ||
+      evt.key === 'Enter' ||
+      evt.key === 'Tab'
+    ) {
+      evt.preventDefault()
+    }
+    else {
+      return
+    }
+
     let tableDeepCopy = this.state.table.slice().map(x => x.slice())
-    let rowLength = this.state.table[0].length - 1
-    let columnLength = this.state.table.length - 1
-    //console.log(evt.key)
+    const rowLength = this.state.table[0].length - 1
+    const columnLength = this.state.table.length - 1
 
     if (evt.key === 'ArrowUp' && row > 0) {
       this[`myRef${row - 1}${column}`].current.focus()
@@ -102,7 +115,6 @@ class App extends React.Component {
       this[`myRef${row}${column - 1}`].current.focus()
     }
     else if (evt.key === 'ArrowRight' || evt.key === 'Tab') {
-      evt.preventDefault()
       // If pressing Right or Tab on the final column, create a new column (with refs) and draw focus on the right cell
       if (column === columnLength) {
         tableDeepCopy = tableDeepCopy.concat([Array(rowLength + 1).fill('')])
