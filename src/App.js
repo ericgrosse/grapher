@@ -56,6 +56,33 @@ function Row(props) {
   )
 }
 
+function Chart(props) {
+  return (
+    <LineChart
+      width={props.width}
+      height={props.height}
+      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      data={props.data}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey={props.graphKeys[0]} />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      {
+        props.graphKeys.map((graphKey, index) => {
+          if (index === 0) {
+            return null
+          }
+          return (
+            <Line key={index} type="monotone" dataKey={graphKey} stroke={props.strokeColors[index - 1]} />
+          )
+        })
+      }
+    </LineChart>
+  )
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -161,13 +188,14 @@ class App extends React.Component {
     this.state.table.map((column, columnIndex) => {
       column.map((row, rowIndex) => {
         if (rowIndex === 0) {
-          return
+          return null
         }
 
         const currentKey = graphKeys[columnIndex]
         graphValues[rowIndex][currentKey] = row
-        return
+        return null
       })
+      return null
     })
 
     return (
@@ -181,28 +209,14 @@ class App extends React.Component {
           self={this}
         />
 
-        <LineChart
+        <Chart
           width={730}
           height={250}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           data={graphValues}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey={graphKeys[0]} />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          {
-            graphKeys.map((graphKey, index) => {
-              if (index === 0) {
-                return
-              }
-              return (
-                <Line type="monotone" dataKey={graphKey} stroke={strokeColors[index - 1]} />      
-              )
-            })  
-          }
-        </LineChart>
+          graphKeys={graphKeys}
+          strokeColors={strokeColors}
+        />
       </div>
     )
   }
