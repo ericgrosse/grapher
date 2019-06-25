@@ -295,7 +295,11 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="container">
-          <h1 className="title">Grapher</h1>
+          <div className="text">
+            <h1 className="title">Grapher</h1>
+            <p>In the table, use the arrow keys, enter and tab to navigate between cells.</p>
+            <p>The values in the first column (excluding the first cell) are editable, as are the formulas at the top of each column.</p> 
+          </div>
 
           <div className="flex-container">
             <div className="flex-item">
@@ -310,13 +314,16 @@ class App extends React.Component {
             </div>
 
             <div className="flex-item">
-              <Chart
-                width={620}
-                height={290}
-                data={graphValues}
-                graphKeys={graphKeys}
-                strokeColors={strokeColors}
-              />
+              <div className="horizontal-offset">
+                <Chart
+                  width={660}
+                  height={290}
+                  data={graphValues}
+                  graphKeys={graphKeys}
+                  strokeColors={strokeColors}
+                />
+              </div>
+
             </div>
           </div>
         </div>
