@@ -46,6 +46,7 @@ function Row(props) {
   return (
     <div className="Row">
       <input
+        className="cell"
         key={`row${props.row}:column${props.column}`}
         ref={props.self[`myRef${props.row}${props.column}`]}
         type="text"
@@ -62,7 +63,6 @@ function Chart(props) {
     <LineChart
       width={props.width}
       height={props.height}
-      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
       data={props.data}
     >
       <CartesianGrid strokeDasharray="3 3" />
@@ -98,7 +98,7 @@ class App extends React.Component {
   }
 
   handleChangeCell = (row, column, evt) => {
-    if(this.isDisabled(row,column)) {
+    if (this.isDisabled(row, column)) {
       return
     }
 
@@ -113,7 +113,7 @@ class App extends React.Component {
         if (index === 0) {
           return col
         }
-        const val =  tableDeepCopy[0][index]
+        const val = tableDeepCopy[0][index]
         return this.evaluateExpression(formula, val)
       })
     }
@@ -230,7 +230,7 @@ class App extends React.Component {
       const result = evaluate(expression)
       return result || ''
     }
-    catch(e) {
+    catch (e) {
       return ''
     }
   }
@@ -249,42 +249,49 @@ class App extends React.Component {
     // Iterate through the table cells to populate the graphValues array of objects
     this.state.table.map((column, columnIndex) => {
       column
-      .filter(row => !!row)
-      .map((row, rowIndex) => {
-        if (rowIndex === 0) {
+        .filter(row => !!row)
+        .map((row, rowIndex) => {
+          if (rowIndex === 0) {
+            return null
+          }
+
+          const currentKey = graphKeys[columnIndex]
+
+          if (graphValues && graphValues[rowIndex]) {
+            graphValues[rowIndex][currentKey] = row
+          }
+
           return null
-        }
-
-        const currentKey = graphKeys[columnIndex]
-
-        if (graphValues && graphValues[rowIndex]) {
-          graphValues[rowIndex][currentKey] = row
-        }
-        
-        return null
-      })
+        })
       return null
     })
 
     return (
       <div className="App">
-        <h1>Grapher</h1>
+        <div className="container">
+          <h1 className="title">Grapher</h1>
 
-        <Table
-          data={this.state.table}
-          onChange={this.handleChangeCell}
-          onKeyDown={this.handleKeyDown}
-          self={this}
-        />
+          <div className="flex-container">
+            <div className="flex-item">
+              <Table
+                data={this.state.table}
+                onChange={this.handleChangeCell}
+                onKeyDown={this.handleKeyDown}
+                self={this}
+              />
+            </div>
 
-        <Chart
-          width={730}
-          height={250}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          data={graphValues}
-          graphKeys={graphKeys}
-          strokeColors={strokeColors}
-        />
+            <div className="flex-item">
+              <Chart
+                width={730}
+                height={250}
+                data={graphValues}
+                graphKeys={graphKeys}
+                strokeColors={strokeColors}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
