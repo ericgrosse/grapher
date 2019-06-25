@@ -237,23 +237,30 @@ class App extends React.Component {
 
   render() {
     const graphKeys = this.state.table.map(column => column[0])
-    const rowLength = this.state.table[0].length - 1
     const columnLength = this.state.table.length - 1
-    const graphValues = [...new Array(rowLength + 1)].map(() => { return {} })
-    
+    const nonEmptyRows = this.state.table[0].filter(cell => !!cell)
+    const graphValues = [...new Array(nonEmptyRows.length)].map(() => { return {} })
+
     const strokeColors = [...new Array(columnLength + 1)].map((el, index) => {
       const baseColors = ['#8884d8', '#82ca9d', '#e91e63', '#00bcd4']
       return baseColors[index % baseColors.length]
     })
 
+    // Iterate through the table cells to populate the graphValues array of objects
     this.state.table.map((column, columnIndex) => {
-      column.map((row, rowIndex) => {
+      column
+      .filter(row => !!row)
+      .map((row, rowIndex) => {
         if (rowIndex === 0) {
           return null
         }
 
         const currentKey = graphKeys[columnIndex]
-        graphValues[rowIndex][currentKey] = row
+
+        if (graphValues && graphValues[rowIndex]) {
+          graphValues[rowIndex][currentKey] = row
+        }
+        
         return null
       })
       return null
