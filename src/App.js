@@ -1,6 +1,7 @@
 import React from 'react'
 import './App.scss'
-import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line} from 'recharts'
+import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts'
+import { evaluate } from 'mathjs'
 
 function Table(props) {
   return (
@@ -87,7 +88,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      table: [['x', 1, 2, 3], ['sin(x)', 0.84, 0.91, 0.14]]
+      table: [['x', 1, 2, 3, ''], ['x^2', 1, 4, 9, ''], ['10 * sin(x)', 8.414709848078965, 9.092974268256818, 1.4112000805986722, '']]
     }
     // Create a ref for every cell
     this.state.table.map((el1, column) => el1.map((el2, row) => {
@@ -97,8 +98,47 @@ class App extends React.Component {
   }
 
   handleChangeCell = (row, column, evt) => {
-    const tableDeepCopy = this.state.table.slice().map(x => x.slice())
+    if(this.isDisabled(row,column)) {
+      return
+    }
+
+    let tableDeepCopy = this.state.table.slice().map(x => x.slice())
     tableDeepCopy[column][row] = evt.target.value
+
+    // If the value of a column header gets updated to a math expression, each value below gets updated accordingly
+    if (row === 0) {
+      const formula = evt.target.value
+
+      tableDeepCopy[column] = tableDeepCopy[column].map((col, index) => {
+        if (index === 0) {
+          return col
+        }
+        const val =  tableDeepCopy[0][index]
+        return this.evaluateExpression(formula, val)
+      })
+    }
+    else if (column === 0) {
+      tableDeepCopy = tableDeepCopy.map((col, index) => {
+        if (index === 0) {
+          return col
+        }
+
+        let formula = null
+
+        return col.map((cell, cellIndex) => {
+          if (cellIndex === 0) {
+            formula = cell
+            return cell
+          }
+          else if (cellIndex === row) {
+            return this.evaluateExpression(formula, evt.target.value)
+          }
+
+          return cell
+        })
+      })
+    }
+
     this.setState({ table: tableDeepCopy })
   }
 
@@ -172,6 +212,27 @@ class App extends React.Component {
     }
 
     return
+  }
+
+  isDisabled = (row, column) => {
+    // Boolean used to disable computed cells
+    const firstCell = row === 0 && column === 0
+    const computedCell = row > 0 && column > 0
+    return firstCell || computedCell
+  }
+
+  evaluateExpression = (formula, value) => {
+    // Given a math formula, replace all instances of the variable x with a numerical value, and evaluate it
+    //console.log(formula)
+    //console.log(value)
+    try {
+      const expression = formula.replace(/x/g, value)
+      const result = evaluate(expression)
+      return result || ''
+    }
+    catch(e) {
+      return ''
+    }
   }
 
   render() {
