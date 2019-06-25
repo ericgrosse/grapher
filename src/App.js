@@ -311,8 +311,8 @@ class App extends React.Component {
 
             <div className="flex-item">
               <Chart
-                width={730}
-                height={250}
+                width={620}
+                height={290}
                 data={graphValues}
                 graphKeys={graphKeys}
                 strokeColors={strokeColors}
