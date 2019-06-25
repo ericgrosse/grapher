@@ -26,10 +26,7 @@
 }
 
 .Table {
-  //background: aliceblue;
   display: flex;
-  border: 1px solid rgba(224, 224, 224, 1);
-  //border-radius: 4px;
 
   @media (max-width: 1400px) {
     margin-bottom: 50px;
@@ -37,29 +34,49 @@
 }
 
 .Column {
-  //background: aquamarine;
+
 }
 
 .Row {
-  //background: azure;
-  border: 1px solid rgba(224, 224, 224, 1);
-
-  &:first-child {
-    border: none;
-    background: rgba(0, 0, 0, 0.87);
-
-    .cell {
-      color: white;
-      
-      border-radius: 4px;
-    }
-  }
-
   .cell {
     background: transparent;
-    border: none;
     outline: none;
+    border: none;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    border-right: 1px solid rgba(224, 224, 224, 1);
     padding: 1rem;
     font-size: 14px;
+
+    &.first-row {
+      background: #209CEE;
+      border: none;
+      outline: none;
+      border-right: 1px solid rgba(224, 224, 224, 1);
+      color: white;
+    }
+
+    &.first-column {
+      border-left: 1px solid rgba(224, 224, 224, 1);
+    }
+
+    &.last-column {
+      
+    }
+
+    &.first-row.first-column {
+      border-top-left-radius: 4px;
+    }
+
+    &.first-row.last-column {
+      border-top-right-radius: 4px;
+    }
+
+    &.last-row.first-column {
+      border-bottom-left-radius: 4px;
+    }
+
+    &.last-row.last-column {
+      border-bottom-right-radius: 4px;
+    }
   }
 }

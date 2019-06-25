@@ -12,6 +12,8 @@ function Table(props) {
             key={index}
             column={column}
             index={index}
+            rowMax={props.rowMax}
+            columnMax={props.columnMax}
             onChange={props.onChange}
             onKeyDown={props.onKeyDown}
             self={props.self}
@@ -32,6 +34,8 @@ function Column(props) {
             cell={row}
             row={index}
             column={props.index}
+            rowMax={props.rowMax}
+            columnMax={props.columnMax}
             onChange={props.onChange}
             onKeyDown={props.onKeyDown}
             self={props.self}
@@ -43,10 +47,32 @@ function Column(props) {
 }
 
 function Row(props) {
+  function computeClassNames() {
+    let className = 'cell '
+
+    if (props.row === 0) {
+      className += 'first-row '
+    }
+
+    if (props.column === 0) {
+      className += 'first-column '
+    }
+
+    if (props.row === props.rowMax - 1) {
+      className += 'last-row '
+    }
+
+    if (props.column === props.columnMax - 1) {
+      className += 'last-column '
+    }
+
+    return className
+  }
+
   return (
     <div className="Row">
       <input
-        className="cell"
+        className={computeClassNames()}
         key={`row${props.row}:column${props.column}`}
         ref={props.self[`myRef${props.row}${props.column}`]}
         type="text"
@@ -275,6 +301,8 @@ class App extends React.Component {
             <div className="flex-item">
               <Table
                 data={this.state.table}
+                rowMax={this.state.table[0].length}
+                columnMax={this.state.table.length}
                 onChange={this.handleChangeCell}
                 onKeyDown={this.handleKeyDown}
                 self={this}
