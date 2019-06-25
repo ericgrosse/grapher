@@ -39,7 +39,7 @@
 
 .Row {
   .cell {
-    background: transparent;
+    background: lighten(#e0e0e0, 6.5%);
     outline: none;
     border: none;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
@@ -57,6 +57,7 @@
 
     &.first-column {
       border-left: 1px solid rgba(224, 224, 224, 1);
+      background: lighten(#e0e0e0, 9%);
     }
 
     &.last-column {
@@ -64,6 +65,7 @@
     }
 
     &.first-row.first-column {
+      background: lighten(#209CEE, 7.5%);
       border-top-left-radius: 4px;
     }
 
